@@ -40,6 +40,11 @@ if (!$project) {
             <div class="project-meta">
                 <span>القسم: <?php echo htmlspecialchars($project['department']); ?></span>
                 <span>سنة التخرج: <?php echo htmlspecialchars($project['grad_year']); ?></span>
+                <?php if (!empty($project['owner_linkedin'])): ?>
+                    <span>
+                        <a href="<?php echo htmlspecialchars($project['owner_linkedin'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="display:inline-block; padding:6px 14px; font-size:14px; text-decoration:none;">LinkedIn — صاحب المشروع</a>
+                    </span>
+                <?php endif; ?>
             </div>
         </div>
 

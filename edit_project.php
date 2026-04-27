@@ -38,6 +38,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     grad_year=$grad_year, 
                     tech_stack='$tech_stack'";
 
+    $linkedin_raw = trim($_POST['owner_linkedin'] ?? '');
+    if ($linkedin_raw === '') {
+        $update_sql .= ', owner_linkedin=NULL';
+    } else {
+        $linkedin_url = preg_match('#^https?://#i', $linkedin_raw) ? $linkedin_raw : 'https://' . ltrim($linkedin_raw, '/');
+        if (stripos($linkedin_url, 'linkedin.com') === false) {
+            $message = "<div style='color:red; margin-bottom:15px;'>رابط LinkedIn غير صالح (يجب أن يحتوي على linkedin.com).</div>";
+        } else {
+            $update_sql .= ", owner_linkedin='" . $conn->real_escape_string($linkedin_url) . "'";
+        }
+    }
+
     // 1. Update Project Image
     if (isset($_FILES['project_image']) && $_FILES['project_image']['error'] == 0) {
         $allowed_ext = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
@@ -210,6 +222,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="form-group">
                     <label>التقنيات المستخدمة (افصل بينها بفاصلة)</label>
                     <input type="text" name="tech_stack" value="<?php echo htmlspecialchars($project['tech_stack']); ?>" required>
+                </div>
+
+                <div class="form-group">
+                    <label>رابط LinkedIn لصاحب المشروع (اختياري)</label>
+                    <input type="url" name="owner_linkedin" dir="ltr" style="text-align:left;" value="<?php echo htmlspecialchars($project['owner_linkedin'] ?? ''); ?>" placeholder="https://www.linkedin.com/in/username">
+                    <small style="display:block; color:#666; margin-top:6px;">يُعرض في صفحة تفاصيل المشروع. اتركه فارغاً لإخفاء الرابط.</small>
                 </div>
 
                 <div class="form-group" style="background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px dashed #ccc; margin-bottom: 15px;">

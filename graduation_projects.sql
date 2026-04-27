@@ -70,6 +70,7 @@ CREATE TABLE `projects` (
   `department` varchar(100) NOT NULL,
   `grad_year` int(11) NOT NULL,
   `tech_stack` varchar(255) NOT NULL,
+  `owner_linkedin` varchar(512) DEFAULT NULL,
   `project_poster` varchar(255) DEFAULT NULL,
   `project_poster_pdf` varchar(255) DEFAULT NULL,
   `image_url` varchar(255) DEFAULT 'default.jpg',

@@ -102,8 +102,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Insert into database if no errors
     if (empty($message)) {
-        $insert_sql = "INSERT INTO projects (title, description, department, grad_year, tech_stack, project_poster, project_poster_pdf, image_url, pdf_file) 
-                       VALUES ('$title', '$description', '$department', $grad_year, '$tech_stack', " . 
+        $owner_linkedin_sql = 'NULL';
+        $linkedin_raw = trim($_POST['owner_linkedin'] ?? '');
+        if ($linkedin_raw !== '') {
+            $linkedin_url = preg_match('#^https?://#i', $linkedin_raw) ? $linkedin_raw : 'https://' . ltrim($linkedin_raw, '/');
+            if (stripos($linkedin_url, 'linkedin.com') === false) {
+                $message = "<div style='color:red; margin-bottom:15px; text-align:center;'>رابط LinkedIn غير صالح (يجب أن يكون من نطاق linkedin.com).</div>";
+            } else {
+                $owner_linkedin_sql = "'" . $conn->real_escape_string($linkedin_url) . "'";
+            }
+        }
+    }
+
+    if (empty($message)) {
+        $insert_sql = "INSERT INTO projects (title, description, department, grad_year, tech_stack, owner_linkedin, project_poster, project_poster_pdf, image_url, pdf_file) 
+                       VALUES ('$title', '$description', '$department', $grad_year, '$tech_stack', $owner_linkedin_sql, " . 
                        ($project_poster ? "'$project_poster'" : "NULL") . ", " . 
                        ($project_poster_pdf ? "'$project_poster_pdf'" : "NULL") . ", " .
                        "'$image_url', " . 
@@ -195,6 +208,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="form-group">
                         <label>التقنيات المستخدمة (افصل بينها بفاصلة)</label>
                         <input type="text" name="tech_stack" placeholder="مثال: React.js, Node.js, MongoDB" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>رابط LinkedIn لصاحب المشروع (اختياري)</label>
+                        <input type="url" name="owner_linkedin" dir="ltr" style="text-align:left;" placeholder="https://www.linkedin.com/in/username">
+                        <small style="display:block; color:#666; margin-top:6px;">يُعرض في صفحة تفاصيل المشروع للزوار.</small>
                     </div>
 
                     <div class="form-group" style="background: #f9fafb; padding: 20px; border-radius: 8px; border: 2px dashed #ccc; text-align: center;">

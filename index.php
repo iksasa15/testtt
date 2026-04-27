@@ -25,6 +25,23 @@ $total_pages = ceil($total_projects / $limit);
 
 $total_students = $conn->query("SELECT COUNT(*) as count FROM users")->fetch_assoc()['count'];
 $total_departments = $conn->query("SELECT COUNT(DISTINCT department) as count FROM projects")->fetch_assoc()['count'];
+$years_row = $conn->query("SELECT COUNT(DISTINCT grad_year) as c FROM projects WHERE grad_year IS NOT NULL AND grad_year != '' AND grad_year != 0")->fetch_assoc();
+$distinct_year_count = (int) ($years_row['c'] ?? 0);
+
+function index_build_query(array $params): string
+{
+    $filtered = [];
+    foreach ($params as $k => $v) {
+        if ($v === null || $v === '') {
+            continue;
+        }
+        if ($k === 'page' && (int) $v < 2) {
+            continue;
+        }
+        $filtered[$k] = $v;
+    }
+    return http_build_query($filtered);
+}
 
 ?>
 <!DOCTYPE html>
@@ -66,79 +83,146 @@ $total_departments = $conn->query("SELECT COUNT(DISTINCT department) as count FR
         </div>
     </header>
 
-    <section class="hero-section">
-        <div class="hero-content">
-            <h2>اكتشف مشاريع الطلاب المتميزة</h2>
-            <p>شارك مشروع تخرجك مع العالم واستكشف مشاريع مبتكرة من زملائك الخريجين. ابحث في أرشيفنا المكون من <?php echo $total_projects; ?> مشروعاً للإلهام والاستفادة.</p>
-            
-            <form method="GET" action="index.php" class="advanced-search-form">
-                <input type="text" name="q" placeholder="ابحث باسم المشروع ..." value="<?php echo htmlspecialchars($search_query); ?>">
-                
-                <select name="dept">
-                    <option value="">جميع الأقسام</option>
-                    <option value="علوم حاسوب" <?php if($dept_filter == 'علوم حاسوب') echo 'selected'; ?>>علوم حاسوب</option>
-                    <option value="هندسة برمجيات" <?php if($dept_filter == 'هندسة برمجيات') echo 'selected'; ?>>هندسة برمجيات</option>
-                </select>
-                
-                <button type="submit">بحث</button>
-                
-                <?php if(!empty($search_query) || !empty($dept_filter)): ?>
-                    <a href="index.php" class="btn-search-clear">إلغاء</a>
-                <?php endif; ?>
-            </form>
-        </div>
-        
-        <div class="hero-image">
-            <img src="pplbg.png" alt="طلاب مشاريع التخرج">
+    <section class="hero-section hero-section--landing" aria-labelledby="hero-heading">
+        <div class="hero-layout">
+            <div class="hero-copy">
+                <p class="hero-kicker">منصة أكاديمية</p>
+                <h2 id="hero-heading" class="hero-headline">
+                    <span class="hero-headline__main">منصة مشاريع التخرج</span>
+                    <span class="hero-headline__tags" aria-hidden="true">
+                        <span>متميزة</span><span>مبتكرة</span><span>ملهمة</span><span>شاملة</span><span>عصرية</span>
+                    </span>
+                </h2>
+                <p class="hero-lead">منصة تجمع طموح الطلاب وإبداعهم</p>
+                <p class="hero-desc">اكتشف مشاريع الطلاب من تخصصات متعددة، مع تصفية ذكية وتجربة عصرية تركز على المحتوى.</p>
+                <div class="hero-actions">
+                    <a href="#projects-board" class="btn btn-primary hero-actions__btn">استكشف المشاريع</a>
+                    <?php if (!isset($_SESSION['user_id'])): ?>
+                        <a href="register.php" class="btn btn-outline hero-actions__btn hero-actions__btn--ghost">إنشاء حساب</a>
+                    <?php else: ?>
+                        <a href="profile.php" class="btn btn-outline hero-actions__btn hero-actions__btn--ghost">ملفي الشخصي</a>
+                    <?php endif; ?>
+                </div>
+                <form method="GET" action="index.php" class="hero-search-bar" role="search">
+                    <input type="hidden" name="dept" value="<?php echo htmlspecialchars($dept_filter, ENT_QUOTES, 'UTF-8'); ?>">
+                    <label class="visually-hidden" for="heroSearchInput">بحث في المشاريع</label>
+                    <input id="heroSearchInput" type="search" name="q" placeholder="ابحث بالاسم أو التقنية..." value="<?php echo htmlspecialchars($search_query, ENT_QUOTES, 'UTF-8'); ?>" autocomplete="off">
+                    <button type="submit" class="hero-search-bar__submit">بحث</button>
+                    <?php if (!empty($search_query) || !empty($dept_filter)): ?>
+                        <a href="index.php" class="hero-search-bar__clear">إلغاء التصفية</a>
+                    <?php endif; ?>
+                </form>
+                <nav class="home-dept-pills" aria-label="تصفية حسب القسم">
+                    <?php
+                    $pill_q = $search_query;
+                    $all_href = 'index.php?' . index_build_query(['q' => $pill_q, 'dept' => '', 'page' => 1]);
+                    $cs_href = 'index.php?' . index_build_query(['q' => $pill_q, 'dept' => 'علوم حاسوب', 'page' => 1]);
+                    $se_href = 'index.php?' . index_build_query(['q' => $pill_q, 'dept' => 'هندسة برمجيات', 'page' => 1]);
+                    ?>
+                    <a class="dept-pill<?php echo $dept_filter === '' ? ' dept-pill--active' : ''; ?>" href="<?php echo htmlspecialchars($all_href, ENT_QUOTES, 'UTF-8'); ?>">الكل</a>
+                    <a class="dept-pill<?php echo $dept_filter === 'علوم حاسوب' ? ' dept-pill--active' : ''; ?>" href="<?php echo htmlspecialchars($cs_href, ENT_QUOTES, 'UTF-8'); ?>">علوم حاسوب</a>
+                    <a class="dept-pill<?php echo $dept_filter === 'هندسة برمجيات' ? ' dept-pill--active' : ''; ?>" href="<?php echo htmlspecialchars($se_href, ENT_QUOTES, 'UTF-8'); ?>">هندسة برمجيات</a>
+                </nav>
+            </div>
+            <div class="hero-visual" aria-hidden="true">
+                <img src="pplbg.png" alt="" loading="lazy">
+            </div>
         </div>
     </section>
 
-    <div class="stats-bar">
+    <div class="stats-bar stats-bar--landing">
         <div class="stat-item">
             <span class="stat-item-icon" aria-hidden="true">📋</span>
             <div>
-                <h3><?php echo $total_projects; ?></h3>
-                <p>مشروع متاح</p>
+                <h3><?php echo (int) $total_projects; ?></h3>
+                <p class="stat-item__label">مشروعاً منشوراً</p>
+                <p class="stat-item__hint">متاح للاستكشاف</p>
             </div>
         </div>
         <div class="stat-item">
-            <span class="stat-item-icon" aria-hidden="true">🎓</span>
+            <span class="stat-item-icon" aria-hidden="true">👤</span>
             <div>
-                <h3><?php echo $total_students; ?></h3>
-                <p>طالب مستفيد</p>
+                <h3><?php echo number_format((int) $total_students); ?></h3>
+                <p class="stat-item__label">مستخدم مسجّل</p>
+                <p class="stat-item__hint">طلاب ومشرفون</p>
+            </div>
+        </div>
+        <div class="stat-item">
+            <span class="stat-item-icon" aria-hidden="true">🏷️</span>
+            <div>
+                <h3><?php echo (int) $total_departments; ?></h3>
+                <p class="stat-item__label">تخصصاً أكاديمياً</p>
+                <p class="stat-item__hint">تصنيفات المشاريع</p>
             </div>
         </div>
         <div class="stat-item">
             <span class="stat-item-icon" aria-hidden="true">⭐</span>
             <div>
                 <h3>50+</h3>
-                <p>مشروع مميز</p>
+                <p class="stat-item__label">مشروعاً مميزاً</p>
+                <p class="stat-item__hint">في الأرشيف</p>
+            </div>
+        </div>
+        <div class="stat-item">
+            <span class="stat-item-icon" aria-hidden="true">📅</span>
+            <div>
+                <h3><?php echo (int) $distinct_year_count; ?></h3>
+                <p class="stat-item__label">سنوات تخرج</p>
+                <p class="stat-item__hint">في الأرشيف</p>
             </div>
         </div>
     </div>
 
-    <div class="container">
-        <div class="projects-grid">
+    <div class="container container--projects" id="projects-board">
+        <header class="projects-section-head">
+            <h2 class="projects-section-head__title">المشاريع</h2>
+            <p class="projects-section-head__meta">
+                <?php
+                $list_sql = "SELECT * FROM projects $where_sql ORDER BY id DESC LIMIT $limit OFFSET $offset";
+                $list_result = $conn->query($list_sql);
+                $shown_on_page = $list_result ? $list_result->num_rows : 0;
+                ?>
+                عرض <?php echo (int) $shown_on_page; ?> من أصل <?php echo (int) $total_projects; ?> مشروعاً
+            </p>
+        </header>
+        <div class="projects-grid projects-grid--landing">
             <?php
-            $sql = "SELECT * FROM projects $where_sql ORDER BY id DESC LIMIT $limit OFFSET $offset";
-            $result = $conn->query($sql);
-
-            if ($result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
-                    $img_src = (!empty($row['image_url']) && $row['image_url'] != 'default.jpg') ? "uploads/".$row['image_url'] : "https://via.placeholder.com/400x200?text=بدون+صورة";
+            if ($list_result && $list_result->num_rows > 0) {
+                while ($row = $list_result->fetch_assoc()) {
+                    $img_src = (!empty($row['image_url']) && $row['image_url'] != 'default.jpg') ? "uploads/" . $row['image_url'] : "https://via.placeholder.com/400x200?text=بدون+صورة";
+                    $tech_raw = isset($row['tech_stack']) ? $row['tech_stack'] : '';
+                    $tech_parts = array_filter(array_map('trim', explode(',', $tech_raw)));
+                    $tech_show = array_slice($tech_parts, 0, 6);
                     ?>
-                    <div class="card">
-                        <img src="<?php echo $img_src; ?>" class="card-img" alt="صورة المشروع">
-                        <div class="card-content">
-                            <div class="tags">
-                                <span class="tag"><?php echo htmlspecialchars($row['department']); ?></span>
-                                <span class="tag"><?php echo htmlspecialchars($row['grad_year']); ?></span>
-                            </div>
-                            <h3><?php echo htmlspecialchars($row['title']); ?></h3>
-                            <p><?php echo mb_strimwidth(htmlspecialchars($row['description']), 0, 90, "..."); ?></p>
-                            <a href="project_details.php?id=<?php echo $row['id']; ?>" class="btn btn-outline btn-block">عرض التفاصيل</a>
+                    <article class="card project-card">
+                        <div class="card-media">
+                            <img src="<?php echo htmlspecialchars($img_src, ENT_QUOTES, 'UTF-8'); ?>" class="card-img" alt="">
                         </div>
-                    </div>
+                        <div class="card-content">
+                            <div class="card-badges">
+                                <span class="badge-soft"><?php echo htmlspecialchars($row['department'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                <span class="badge-soft badge-soft--muted"><?php echo htmlspecialchars((string) $row['grad_year'], ENT_QUOTES, 'UTF-8'); ?></span>
+                            </div>
+                            <h3><?php echo htmlspecialchars($row['title'], ENT_QUOTES, 'UTF-8'); ?></h3>
+                            <p class="card-excerpt"><?php echo mb_strimwidth(htmlspecialchars($row['description'], ENT_QUOTES, 'UTF-8'), 0, 160, '…'); ?></p>
+                            <?php if (!empty($tech_show)): ?>
+                                <div class="card-tech">
+                                    <span class="card-tech__label">التقنيات</span>
+                                    <div class="card-tech__chips">
+                                        <?php foreach ($tech_show as $t): ?>
+                                            <span class="tech-chip"><?php echo htmlspecialchars($t, ENT_QUOTES, 'UTF-8'); ?></span>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                            <div class="card-footer">
+                                <?php if (!empty($row['owner_linkedin'])): ?>
+                                    <a href="<?php echo htmlspecialchars($row['owner_linkedin'], ENT_QUOTES, 'UTF-8'); ?>" class="card-footer__link" target="_blank" rel="noopener noreferrer">تواصل على لينكد إن</a>
+                                <?php endif; ?>
+                                <a href="project_details.php?id=<?php echo (int) $row['id']; ?>" class="btn btn-primary btn-block card-footer__cta">عرض التفاصيل</a>
+                            </div>
+                        </div>
+                    </article>
                     <?php
                 }
             } else {

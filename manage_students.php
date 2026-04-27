@@ -27,8 +27,13 @@ $total_students = $conn->query("SELECT COUNT(*) as count FROM users")->fetch_ass
         <main class="admin-content">
             
             <header class="admin-topbar">
-                <h3>إدارة حسابات الطلاب</h3>
-                <span class="table-pill">إجمالي المسجلين: <?php echo $total_students; ?></span>
+                <div class="admin-topbar__titles">
+                    <h3>إدارة الطلاب</h3>
+                    <p class="admin-topbar__subtitle">قائمة الحسابات المسجلة في المنصة — يمكنك مراجعة البيانات أو حذف حساب عند الحاجة.</p>
+                </div>
+                <div class="admin-topbar__aside">
+                    <span class="table-pill">إجمالي المسجلين: <?php echo (int) $total_students; ?></span>
+                </div>
             </header>
 
             <?php if(isset($_GET['msg']) && $_GET['msg'] == 'deleted'): ?>

@@ -171,10 +171,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <?php include 'admin_side_bar.php'; ?>
 
-        <div class="admin-content">
+        <main class="admin-content">
 
             <header class="admin-topbar">
-                <h3>تعديل مشروع</h3>
+                <div class="admin-topbar__titles">
+                    <h3>تعديل مشروع</h3>
+                    <p class="admin-topbar__subtitle">تحديث بيانات المشروع والملفات المرفقة ثم حفظ التغييرات.</p>
+                </div>
             </header>
 
         <div class="form-container">
@@ -288,7 +291,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             </form>
         </div>
-        </div>
+        </main>
     </div>
 
 </body>

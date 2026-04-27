@@ -26,8 +26,13 @@ $total_projects = $conn->query("SELECT COUNT(*) as count FROM projects")->fetch_
         <main class="admin-content">
             
             <header class="admin-topbar">
-                <h3>إدارة المشاريع التفصيلية</h3>
-                <span class="table-pill">إجمالي المشاريع: <?php echo $total_projects; ?></span>
+                <div class="admin-topbar__titles">
+                    <h3>إدارة المشاريع</h3>
+                    <p class="admin-topbar__subtitle">عرض المشاريع المسجلة، البحث السريع، والوصول لتعديل أو حذف أي مشروع.</p>
+                </div>
+                <div class="admin-topbar__aside">
+                    <span class="table-pill">إجمالي المشاريع: <?php echo (int) $total_projects; ?></span>
+                </div>
             </header>
 
             <?php if(isset($_GET['msg'])): ?>

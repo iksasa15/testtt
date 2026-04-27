@@ -141,12 +141,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </head>
     <body class="admin-body">
 
+        <div class="admin-layout">
+
         <?php include 'admin_side_bar.php' ?>
 
-        <div class="admin-content">
+        <main class="admin-content">
             
             <header class="admin-topbar">
-                <h3>إضافة مشروع تخرج جديد</h3>
+                <div class="admin-topbar__titles">
+                    <h3>إضافة مشروع تخرج</h3>
+                    <p class="admin-topbar__subtitle">املأ الحقول وارفع الصور والملفات المطلوبة ثم أرسل النموذج لإدراج المشروع في الأرشيف.</p>
+                </div>
             </header>
 
             <div class="form-container">
@@ -222,6 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 </form>
             </div>
+        </main>
         </div>
     </body>
 </html>

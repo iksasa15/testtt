@@ -46,9 +46,17 @@ while($row = $year_query->fetch_assoc()) {
         <main class="admin-content">
             
             <header class="admin-topbar">
-                <h3>مرحباً بك، مدير النظام</h3>
+                <div class="admin-topbar__titles">
+                    <h3>مرحباً بك في لوحة التحكم</h3>
+                    <p class="admin-topbar__subtitle">نظرة عامة على المشاريع والطلاب والأقسام — تُحدَّث من قاعدة البيانات مباشرة.</p>
+                </div>
             </header>
 
+            <section class="admin-section" aria-labelledby="admin-stats-heading">
+                <div class="admin-section__head">
+                    <h2 id="admin-stats-heading" class="admin-section__title">مؤشرات سريعة</h2>
+                    <p class="admin-section__desc">أرقام إجمالية تساعدك على متابعة نشاط المنصة.</p>
+                </div>
             <div class="stats-grid">
                 <div class="stat-card">
                     <h4>إجمالي المشاريع</h4>
@@ -63,7 +71,13 @@ while($row = $year_query->fetch_assoc()) {
                     <p class="stat-number"><?php echo $total_departments; ?></p>
                 </div>
             </div>
+            </section>
 
+            <section class="admin-section" aria-labelledby="admin-charts-heading">
+                <div class="admin-section__head">
+                    <h2 id="admin-charts-heading" class="admin-section__title">الرسوم البيانية</h2>
+                    <p class="admin-section__desc">توزيع المشاريع حسب القسم وسنة التخرج.</p>
+                </div>
             <div class="charts-container">
                 <div class="chart-box">
                     <h4>المشاريع حسب القسم</h4>
@@ -74,6 +88,7 @@ while($row = $year_query->fetch_assoc()) {
                     <canvas id="yearChart"></canvas>
                 </div>
             </div>
+            </section>
             
         </main>
     </div>
@@ -93,12 +108,15 @@ while($row = $year_query->fetch_assoc()) {
                 datasets: [{
                     label: 'عدد المشاريع',
                     data: deptData,
-                    backgroundColor: '#3498db',
-                    borderRadius: 5
+                    backgroundColor: 'rgba(74, 108, 247, 0.85)',
+                    borderColor: '#1e40af',
+                    borderWidth: 1,
+                    borderRadius: 8
                 }]
             },
-            options: { 
+            options: {
                 responsive: true,
+                plugins: { legend: { display: false } },
                 scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
             }
         });
@@ -110,10 +128,15 @@ while($row = $year_query->fetch_assoc()) {
                 labels: yearLabels,
                 datasets: [{
                     data: yearData,
-                    backgroundColor: ['#2ecc71', '#f1c40f', '#e67e22', '#9b59b6', '#34495e']
+                    backgroundColor: ['#4a6cf7', '#3498db', '#1e40af', '#6b7280', '#9ca3af', '#cbd5e1'],
+                    borderColor: '#ffffff',
+                    borderWidth: 2
                 }]
             },
-            options: { responsive: true }
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom', labels: { padding: 14, font: { size: 12 } } } }
+            }
         });
     </script>
 </body>

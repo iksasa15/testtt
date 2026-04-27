@@ -401,6 +401,141 @@ function index_build_query(array $params): string
     </script>
     <?php endif; ?>
 
+    <div class="ai-chat-widget" id="aiChatWidget">
+        <div class="ai-chat-header" onclick="toggleAiChat()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||(event.key===' '||event.code==='Space')){event.preventDefault();toggleAiChat();}">
+            <span class="ai-chat-header__title">
+                <span class="ai-chat-header__ico" aria-hidden="true">✨</span>
+                مساعد المشاريع (Gemini)
+            </span>
+            <span class="ai-chat-header__toggle" id="aiChatToggleIcon">▲</span>
+        </div>
+        <div class="ai-chat-body" id="aiChatBody" aria-live="polite"></div>
+        <div class="ai-chat-footer">
+            <input type="text" id="aiChatInput" placeholder="اسأل عن المشاريع أو التقنيات..." maxlength="2000" autocomplete="off" onkeypress="aiChatKeyPress(event)">
+            <button type="button" class="ai-chat-send" id="aiChatSend" onclick="sendAiChat()">إرسال</button>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var aiHistory = [];
+
+            function escapeHtml(s) {
+                var d = document.createElement('div');
+                d.textContent = s;
+                return d.innerHTML;
+            }
+
+            function appendBubble(role, text) {
+                var body = document.getElementById('aiChatBody');
+                if (!body) return;
+                var wrap = document.createElement('div');
+                wrap.className = 'ai-chat-msg ai-chat-msg--' + role;
+                var inner = document.createElement('div');
+                inner.className = 'ai-chat-msg__bubble';
+                inner.innerHTML = '<p>' + escapeHtml(text).replace(/\n/g, '<br>') + '</p>';
+                wrap.appendChild(inner);
+                body.appendChild(wrap);
+                body.scrollTop = body.scrollHeight;
+            }
+
+            function appendTyping() {
+                var body = document.getElementById('aiChatBody');
+                if (!body) return null;
+                var el = document.createElement('div');
+                el.className = 'ai-chat-msg ai-chat-msg--model ai-chat-msg--typing';
+                el.id = 'aiChatTyping';
+                el.innerHTML = '<div class="ai-chat-msg__bubble"><span class="ai-chat-typing">جاري الكتابة…</span></div>';
+                body.appendChild(el);
+                body.scrollTop = body.scrollHeight;
+                return el;
+            }
+
+            window.toggleAiChat = function () {
+                var w = document.getElementById('aiChatWidget');
+                var icon = document.getElementById('aiChatToggleIcon');
+                if (!w || !icon) return;
+                w.classList.toggle('open');
+                icon.textContent = w.classList.contains('open') ? '▼' : '▲';
+            };
+
+            window.aiChatKeyPress = function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendAiChat();
+                }
+            };
+
+            window.sendAiChat = function () {
+                var input = document.getElementById('aiChatInput');
+                var btn = document.getElementById('aiChatSend');
+                if (!input || !btn) return;
+                var msg = input.value.trim();
+                if (!msg) return;
+
+                input.value = '';
+                appendBubble('user', msg);
+                aiHistory.push({ role: 'user', text: msg });
+
+                btn.disabled = true;
+                input.disabled = true;
+                var typing = appendTyping();
+
+                fetch('gemini_chat.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json; charset=utf-8' },
+                    body: JSON.stringify({ message: msg, history: aiHistory.slice(0, -1) })
+                })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (typing && typing.parentNode) typing.parentNode.removeChild(typing);
+                        if (data.ok && data.reply) {
+                            appendBubble('model', data.reply);
+                            aiHistory.push({ role: 'model', text: data.reply });
+                            if (aiHistory.length > 40) {
+                                aiHistory = aiHistory.slice(-40);
+                            }
+                        } else {
+                            if (aiHistory.length && aiHistory[aiHistory.length - 1].role === 'user') {
+                                aiHistory.pop();
+                                var uMsgs = document.querySelectorAll('#aiChatBody .ai-chat-msg--user');
+                                var lastU = uMsgs[uMsgs.length - 1];
+                                if (lastU && lastU.parentNode) lastU.parentNode.removeChild(lastU);
+                            }
+                            appendBubble('model', data.error || 'حدث خطأ غير متوقع.');
+                        }
+                    })
+                    .catch(function () {
+                        if (typing && typing.parentNode) typing.parentNode.removeChild(typing);
+                        if (aiHistory.length && aiHistory[aiHistory.length - 1].role === 'user') {
+                            aiHistory.pop();
+                            var uMsgs2 = document.querySelectorAll('#aiChatBody .ai-chat-msg--user');
+                            var lastU2 = uMsgs2[uMsgs2.length - 1];
+                            if (lastU2 && lastU2.parentNode) lastU2.parentNode.removeChild(lastU2);
+                        }
+                        appendBubble('model', 'تعذر الاتصال بالخادم. تحقق من الشبكة أو من ضبط GEMINI_API_KEY.');
+                    })
+                    .finally(function () {
+                        btn.disabled = false;
+                        input.disabled = false;
+                        input.focus();
+                    });
+            };
+
+            var first = true;
+            var origToggle = window.toggleAiChat;
+            window.toggleAiChat = function () {
+                origToggle();
+                var w = document.getElementById('aiChatWidget');
+                var body = document.getElementById('aiChatBody');
+                if (first && w && w.classList.contains('open') && body && body.children.length === 0) {
+                    first = false;
+                    appendBubble('model', 'مرحباً! أنا مساعد منصة مشاريع التخرج. يمكنك سؤالي عن أفكار مشاريع، تقنيات، أو كيفية استخدام المنصة بشكل عام.');
+                }
+            };
+        })();
+    </script>
+
     <script>
         // سكربت إظهار وإخفاء القائمة في الجوال
         function toggleMenu() {

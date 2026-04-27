@@ -15,11 +15,18 @@ function style_css_href(): string
     return $cache;
 }
 
-$servername = getenv('DB_HOST') ?: 'localhost';
-$port = (int) (getenv('DB_PORT') ?: 3306);
-$username = getenv('DB_USER') ?: 'root';
-$password = getenv('DB_PASS') !== false ? (string) getenv('DB_PASS') : '';
-$dbname = getenv('DB_NAME') ?: 'graduation_projects';
+// DB_* للتشغيل المحلي؛ على Railway اربط متغيرات خدمة MySQL (MYSQLHOST وغيرها) كمرجع من نفس المشروع.
+$servername = getenv('DB_HOST') ?: (getenv('MYSQLHOST') ?: 'localhost');
+$port = (int) (getenv('DB_PORT') ?: (getenv('MYSQLPORT') ?: 3306));
+$username = getenv('DB_USER') ?: (getenv('MYSQLUSER') ?: 'root');
+if (getenv('DB_PASS') !== false) {
+    $password = (string) getenv('DB_PASS');
+} elseif (getenv('MYSQLPASSWORD') !== false) {
+    $password = (string) getenv('MYSQLPASSWORD');
+} else {
+    $password = '';
+}
+$dbname = getenv('DB_NAME') ?: (getenv('MYSQLDATABASE') ?: 'graduation_projects');
 
 try {
     $conn = new mysqli($servername, $username, $password, $dbname, $port > 0 ? $port : 3306);

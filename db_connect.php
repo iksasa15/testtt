@@ -41,3 +41,6 @@ try {
         . '</small>'
     );
 }
+
+require_once __DIR__ . '/includes/seed_projects.php';
+ensure_sample_projects_if_empty($conn);

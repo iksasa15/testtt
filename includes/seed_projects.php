@@ -1,0 +1,41 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * إن كانت جدول المشاريع فارغاً، يُدرج مشاريع تجريبية (مرة واحدة لكل بيئة).
+ */
+function ensure_sample_projects_if_empty(mysqli $conn): void
+{
+    static $done = false;
+    if ($done) {
+        return;
+    }
+    $done = true;
+
+    $r = $conn->query('SELECT COUNT(*) AS n FROM projects');
+    if ($r === false) {
+        return;
+    }
+    if ((int) $r->fetch_assoc()['n'] > 0) {
+        return;
+    }
+
+    $sql = <<<'SQL'
+INSERT INTO `projects` (`id`, `title`, `description`, `department`, `grad_year`, `tech_stack`, `owner_linkedin`, `project_poster`, `project_poster_pdf`, `image_url`, `pdf_file`) VALUES
+(1, 'منصة إدارة مشاريع التخرج الجامعية', 'منصة ويب عربية لعرض ومشاركة مشاريع التخرج مع بحث متقدم وتصفية حسب القسم وسنة التخرج ورفع ملفات توضيحية.', 'علوم الحاسب والمعلومات', 2026, 'PHP, MySQL, HTML, CSS, JavaScript', NULL, NULL, NULL, 'default.jpg', NULL),
+(2, 'تطبيق إرشاد أكاديمي بالذكاء الاصطناعي', 'واجهة تساعد الطالب على تلخيص المقررات واقتراح خطة مراجعة حسب الجدول الدراسي مع تذكير بالمواعيد.', 'نظم المعلومات', 2025, 'Python, FastAPI, PostgreSQL, REST', NULL, NULL, NULL, 'default.jpg', NULL),
+(3, 'نظام مراقبة استهلاك الطاقة في المختبرات', 'لوحة تحكم لقراءة أجهزة استشعار وعرض الاستهلاك اليومي وتنبيهات عند تجاوز العتبة.', 'هندسة الحاسب', 2025, 'C++, MQTT, Node.js, Chart.js', NULL, NULL, NULL, 'default.jpg', NULL),
+(4, 'منصة تعلم تفاعلية للبرمجة للمبتدئين', 'دروس قصيرة تمارين فورية وتتبع تقدم المتعلم مع شهادات إتمام بسيطة.', 'علوم الحاسب والمعلومات', 2024, 'React, Firebase, TypeScript', NULL, NULL, NULL, 'default.jpg', NULL),
+(5, 'نظام حجز المواعيد للإرشاد الأكاديمي', 'يسمح للطالب بحجز موعد مع المرشد الأكاديمي وإدارة الجدول من لوحة المرشد.', 'نظم المعلومات', 2026, 'PHP, MySQL, FullCalendar', NULL, NULL, NULL, 'default.jpg', NULL),
+(6, 'تطبيق مكتبة رقمية للمقررات', 'رفع ملخصات وملفات PDF مع تصنيف حسب المقرر والبحث النصي داخل العناوين.', 'علوم الحاسب والمعلومات', 2025, 'Laravel, MySQL, Vue.js', NULL, NULL, NULL, 'default.jpg', NULL),
+(7, 'موقع تعريفي لقسم علوم الحاسب', 'صفحات عن الرؤية والتخصصات وروابط للمشاريع المميزة ونموذج تواصل.', 'علوم الحاسب والمعلومات', 2024, 'HTML, CSS, JavaScript', NULL, NULL, NULL, 'default.jpg', NULL),
+(8, 'نظام إدارة فعاليات الجامعة', 'تسجيل الحضور، الجداول الزمنية، وإشعارات للمسجلين قبل الفعالية.', 'نظم المعلومات', 2026, 'PHP, MySQL, Bootstrap', NULL, NULL, NULL, 'default.jpg', NULL),
+(9, 'تطبيق تتبع عادات الدراسة', 'مؤقت بومودورو وإحصائيات أسبوعية وتذكيرات لطيفة لزيادة التركيز.', 'هندسة البرمجيات', 2025, 'Flutter, Dart, SQLite', NULL, NULL, NULL, 'default.jpg', NULL),
+(10, 'بوابة تقديم طلبات مشاريع التخرج', 'نموذج إلكتروني لرفع الفكرة والمشرف مع حالات الموافقة من الإدارة.', 'علوم الحاسب والمعلومات', 2026, 'PHP, MySQL, Alpine.js', NULL, NULL, NULL, 'default.jpg', NULL),
+(11, 'نظام إدارة مخزون مختبر الحاسب', 'تسجيل الأجهزة والإعارات والصيانة مع تقارير جرد شهرية.', 'هندسة الحاسب', 2024, 'PHP, MySQL', NULL, NULL, NULL, 'default.jpg', NULL),
+(12, 'منصة نقاش جماعي لمقرر مشروع التخرج', 'منتدى بسيط للمجموعات مع مرفقات وإشعارات عند رد المشرف.', 'هندسة البرمجيات', 2025, 'PHP, MySQL, JavaScript', NULL, NULL, NULL, 'default.jpg', NULL)
+SQL;
+
+    $conn->query($sql);
+}

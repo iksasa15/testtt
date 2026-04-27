@@ -2,6 +2,38 @@
 session_start();
 include 'db_connect.php';
 
+/**
+ * يقبل كلمة مرور مكوّنة من أرقام فقط سواء كُتبت بالإنجليزي (1234) أو العربي (١٢٣٤).
+ */
+function admin_digit_password_variants(string $password): array
+{
+    $variants = [$password];
+    $western = '0123456789';
+    $arabic = '';
+    for ($i = 0; $i < 10; $i++) {
+        $arabic .= mb_chr(0x0660 + $i, 'UTF-8');
+    }
+    if (preg_match('/^[0-9]+$/', $password)) {
+        $variants[] = strtr($password, $western, $arabic);
+    }
+    if (preg_match('/^[\x{0660}-\x{0669}]+$/u', $password)) {
+        $variants[] = strtr($password, $arabic, $western);
+    }
+
+    return array_values(array_unique($variants));
+}
+
+function admin_password_matches_hash(string $password, string $hash): bool
+{
+    foreach (admin_digit_password_variants($password) as $candidate) {
+        if (password_verify($candidate, $hash)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 $error = '';
 
 if (isset($_SESSION['admin_logged_in'])) {
@@ -19,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($result->num_rows > 0) {
         $admin = $result->fetch_assoc();
         
-        if (password_verify($password, $admin['password'])) {
+        if (admin_password_matches_hash($password, $admin['password'])) {
             $_SESSION['admin_logged_in'] = true;
             $_SESSION['admin_username'] = $admin['username'];
             

@@ -1,0 +1,36 @@
+# تشغيل محلي يشبه الاستضافة: Apache + PHP + MariaDB
+# من جذر المشروع: docker compose up --build
+# ثم المتصفح: http://localhost:8080/
+
+services:
+  db:
+    image: mariadb:11
+    environment:
+      MYSQL_ROOT_PASSWORD: localroot
+      MYSQL_DATABASE: graduation_projects
+    volumes:
+      - ./graduation_projects.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-plocalroot"]
+      interval: 4s
+      timeout: 5s
+      retries: 25
+      start_period: 20s
+
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_USER: root
+      DB_PASS: localroot
+      DB_NAME: graduation_projects
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:

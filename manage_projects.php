@@ -70,7 +70,7 @@ $total_projects = $conn->query("SELECT COUNT(*) as count FROM projects")->fetch_
                                 
                                 echo "<tr>";
                                 
-                                echo "<td><img src='" . $pic . "' class='project-thumb' alt='صورة'></td>";
+                                echo "<td><img src='" . htmlspecialchars($pic, ENT_QUOTES, 'UTF-8') . "' class='project-thumb' alt='صورة'></td>";
                                 
                                 echo "<td>
                                         <strong>" . htmlspecialchars($row['title']) . "</strong><br>

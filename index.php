@@ -189,7 +189,7 @@ function index_build_query(array $params): string
             <?php
             if ($list_result && $list_result->num_rows > 0) {
                 while ($row = $list_result->fetch_assoc()) {
-                    $img_src = (!empty($row['image_url']) && $row['image_url'] != 'default.jpg') ? "uploads/" . $row['image_url'] : "https://via.placeholder.com/400x200?text=بدون+صورة";
+                    $img_src = project_image_src($row['image_url'] ?? null, 'https://via.placeholder.com/400x200?text=No+image');
                     $tech_raw = isset($row['tech_stack']) ? $row['tech_stack'] : '';
                     $tech_parts = array_filter(array_map('trim', explode(',', $tech_raw)));
                     $tech_show = array_slice($tech_parts, 0, 6);

@@ -17,7 +17,7 @@ if (!$project) {
     die("<!DOCTYPE html><html lang='ar' dir='rtl'><head><meta charset='UTF-8'><link rel='stylesheet' href='" . htmlspecialchars(style_css_href(), ENT_QUOTES, 'UTF-8') . "'></head><body class='page-project-detail'><h2 class='project-not-found-title'>عذراً، المشروع غير موجود.</h2><p style='text-align:center;margin-top:1rem;'><a href='index.php' class='btn btn-primary'>العودة للرئيسية</a></p></body></html>");
 }
 
-$img_main = 'uploads/' . ($project['image_url'] ? $project['image_url'] : 'placeholder.jpg');
+$img_main = project_image_src($project['image_url'] ?? null, 'https://via.placeholder.com/960x540?text=Project');
 $techs_raw = isset($project['tech_stack']) ? $project['tech_stack'] : '';
 $techs_list = array_filter(array_map('trim', explode(',', $techs_raw)));
 $has_files = !empty($project['pdf_file']) || !empty($project['project_poster_pdf']);

@@ -15,6 +15,22 @@ function style_css_href(): string
     return $cache;
 }
 
+/**
+ * رابط عرض صورة المشروع: اسم ملف داخل uploads/ أو رابط http(s) مخزّن في القاعدة.
+ */
+function project_image_src(?string $image_url, string $fallback = 'https://via.placeholder.com/400x200?text=No+image'): string
+{
+    $u = trim((string) $image_url);
+    if ($u === '' || $u === 'default.jpg') {
+        return $fallback;
+    }
+    if (preg_match('#^https?://#i', $u)) {
+        return $u;
+    }
+
+    return 'uploads/' . $u;
+}
+
 // DB_* للتشغيل المحلي؛ على Railway اربط متغيرات خدمة MySQL (MYSQLHOST وغيرها) كمرجع من نفس المشروع.
 $servername = getenv('DB_HOST') ?: (getenv('MYSQLHOST') ?: 'localhost');
 $port = (int) (getenv('DB_PORT') ?: (getenv('MYSQLPORT') ?: 3306));
@@ -44,3 +60,4 @@ try {
 
 require_once __DIR__ . '/includes/seed_projects.php';
 ensure_sample_projects_if_empty($conn);
+migrate_sample_project_remote_images($conn);

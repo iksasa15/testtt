@@ -224,8 +224,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 <div class="form-group upload-zone">
                     <label>صورة واجهة المشروع الحالية</label>
-                    <?php if(!empty($project['image_url']) && $project['image_url'] != 'default.jpg'): ?>
-                        <img src="uploads/<?php echo $project['image_url']; ?>" alt="صورة المشروع" class="current-image-preview">
+                    <?php if (!empty($project['image_url']) && $project['image_url'] !== 'default.jpg'): ?>
+                        <img src="<?php echo htmlspecialchars(project_image_src($project['image_url']), ENT_QUOTES, 'UTF-8'); ?>" alt="صورة المشروع" class="current-image-preview">
                     <?php else: ?>
                         <p class="form-hint">يستخدم هذا المشروع الصورة الافتراضية.</p>
                     <?php endif; ?>

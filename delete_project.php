@@ -19,9 +19,11 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         $row = $result->fetch_assoc();
         
         // 1. Delete main project image
-        if (!empty($row['image_url']) && $row['image_url'] != 'default.jpg') {
-            $image_path = "uploads/" . $row['image_url'];
-            if (file_exists($image_path)) unlink($image_path);
+        if (!empty($row['image_url']) && $row['image_url'] !== 'default.jpg' && !preg_match('#^https?://#i', $row['image_url'])) {
+            $image_path = 'uploads/' . $row['image_url'];
+            if (file_exists($image_path)) {
+                unlink($image_path);
+            }
         }
 
         // 2. Delete poster image

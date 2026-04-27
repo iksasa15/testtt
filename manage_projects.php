@@ -65,7 +65,7 @@ $total_projects = $conn->query("SELECT COUNT(*) as count FROM projects")->fetch_
 
                         if ($result->num_rows > 0) {
                             while($row = $result->fetch_assoc()) {
-                                $pic = (!empty($row['image_url']) && $row['image_url'] != 'default.jpg') ? "uploads/" . $row['image_url'] : "https://via.placeholder.com/60x40?text=بدون";
+                                $pic = project_image_src($row['image_url'] ?? null, 'https://via.placeholder.com/60x40?text=-');
                                 $date = date('Y-m-d', strtotime($row['created_at'] ?? 'now')); // افتراض وجود created_at
                                 
                                 echo "<tr>";

@@ -36,12 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['user_pic'] = $new_image_name;
             }
         } else {
-            $message = "<p style='color:red;'>صيغة الصورة غير مدعومة. يرجى رفع JPG أو PNG.</p>";
+            $message = "<p class='msg-error'>صيغة الصورة غير مدعومة. يرجى رفع JPG أو PNG.</p>";
         }
     }
     
     if(empty($message)) {
-        $message = "<p style='color:green; text-align:center;'>تم تحديث بياناتك بنجاح!</p>";
+        $message = "<p class='msg-success'>تم تحديث بياناتك بنجاح!</p>";
     }
 }
 
@@ -55,12 +55,7 @@ $user = $result->fetch_assoc();
 <head>
     <meta charset="UTF-8">
     <title>الملف الشخصي</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        .profile-container { max-width: 600px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: right; }
-        .profile-pic-preview { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; display: block; margin: 0 auto 20px; border: 3px solid #2563eb; }
-        textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; height: 100px; resize: vertical; }
-    </style>
+    <link rel="stylesheet" href="<?php echo htmlspecialchars(style_css_href(), ENT_QUOTES, 'UTF-8'); ?>">
 </head>
 <body>
     <header class="main-header">
@@ -68,13 +63,13 @@ $user = $result->fetch_assoc();
             <div class="logo">أرشيف المشاريع</div>
             <nav>
                 <a href="index.php">الرئيسية</a>
-                <a href="logout_user.php" style="color: #e74c3c; margin-right:15px;">تسجيل الخروج</a>
+                <a href="logout_user.php" class="nav-link-danger">تسجيل الخروج</a>
             </nav>
         </div>
     </header>
 
-    <div class="profile-container">
-        <h2 style="text-align:center; color:#2563eb;">ملفي الشخصي</h2>
+    <div class="profile-shell">
+        <h2>ملفي الشخصي</h2>
         <?php echo $message; ?>
         
         <form method="POST" action="" enctype="multipart/form-data">

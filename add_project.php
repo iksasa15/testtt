@@ -3,7 +3,7 @@ session_start();
 include 'db_connect.php';
 
 if (!isset($_SESSION['admin_logged_in'])) {
-    header("Location: login.php");
+    header("Location: login_admin.php");
     exit();
 }
 
@@ -35,10 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (move_uploaded_file($_FILES['project_image']['tmp_name'], $upload_path)) {
                 $image_url = $new_image_name;
             } else {
-                $message = "<div style='color:red; margin-bottom:15px; text-align:center;'>حدث خطأ أثناء رفع الصورة إلى المجلد.</div>";
+                $message = "<div class='auth-error'>حدث خطأ أثناء رفع الصورة إلى المجلد.</div>";
             }
         } else {
-            $message = "<div style='color:red; margin-bottom:15px; text-align:center;'>صيغة الصورة غير مدعومة. يرجى رفع ملف بصيغة JPG, PNG أو WEBP.</div>";
+            $message = "<div class='auth-error'>صيغة الصورة غير مدعومة. يرجى رفع ملف بصيغة JPG, PNG أو WEBP.</div>";
         }
     }
 
@@ -55,10 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (move_uploaded_file($_FILES['poster_image']['tmp_name'], $upload_path)) {
                 $project_poster = $new_poster_name;
             } else {
-                $message = "<div style='color:red; margin-bottom:15px; text-align:center;'>حدث خطأ أثناء رفع صورة البوستر.</div>";
+                $message = "<div class='auth-error'>حدث خطأ أثناء رفع صورة البوستر.</div>";
             }
         } else {
-            $message = "<div style='color:red; margin-bottom:15px; text-align:center;'>صيغة صورة البوستر غير مدعومة.</div>";
+            $message = "<div class='auth-error'>صيغة صورة البوستر غير مدعومة.</div>";
         }
     }
 
@@ -74,10 +74,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (move_uploaded_file($_FILES['project_pdf']['tmp_name'], $pdf_upload_path)) {
                 $pdf_file = $new_pdf_name;
             } else {
-                $message = "<div style='color:red; margin-bottom:15px; text-align:center;'>حدث خطأ أثناء رفع ملف الـ PDF الخاص بالمشروع.</div>";
+                $message = "<div class='auth-error'>حدث خطأ أثناء رفع ملف الـ PDF الخاص بالمشروع.</div>";
             }
         } else {
-            $message = "<div style='color:red; margin-bottom:15px; text-align:center;'>صيغة الملف غير مدعومة. يرجى رفع ملف بصيغة PDF فقط للتوثيق.</div>";
+            $message = "<div class='auth-error'>صيغة الملف غير مدعومة. يرجى رفع ملف بصيغة PDF فقط للتوثيق.</div>";
         }
     }
 
@@ -93,10 +93,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (move_uploaded_file($_FILES['poster_pdf']['tmp_name'], $pdf_upload_path)) {
                 $project_poster_pdf = $new_poster_pdf_name;
             } else {
-                $message = "<div style='color:red; margin-bottom:15px; text-align:center;'>حدث خطأ أثناء رفع ملف الـ PDF الخاص بالبوستر.</div>";
+                $message = "<div class='auth-error'>حدث خطأ أثناء رفع ملف الـ PDF الخاص بالبوستر.</div>";
             }
         } else {
-            $message = "<div style='color:red; margin-bottom:15px; text-align:center;'>صيغة ملف البوستر غير مدعومة. يرجى رفع ملف بصيغة PDF فقط.</div>";
+            $message = "<div class='auth-error'>صيغة ملف البوستر غير مدعومة. يرجى رفع ملف بصيغة PDF فقط.</div>";
         }
     }
 
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($linkedin_raw !== '') {
             $linkedin_url = preg_match('#^https?://#i', $linkedin_raw) ? $linkedin_raw : 'https://' . ltrim($linkedin_raw, '/');
             if (stripos($linkedin_url, 'linkedin.com') === false) {
-                $message = "<div style='color:red; margin-bottom:15px; text-align:center;'>رابط LinkedIn غير صالح (يجب أن يكون من نطاق linkedin.com).</div>";
+                $message = "<div class='auth-error'>رابط LinkedIn غير صالح (يجب أن يكون من نطاق linkedin.com).</div>";
             } else {
                 $owner_linkedin_sql = "'" . $conn->real_escape_string($linkedin_url) . "'";
             }
@@ -123,9 +123,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                        ($pdf_file ? "'$pdf_file'" : "NULL") . ")";
 
         if ($conn->query($insert_sql)) {
-            $message = "<div style='color:green; margin-bottom:15px; text-align:center; font-weight:bold; background:#d4edda; padding:10px; border-radius:5px;'>تمت إضافة المشروع بنجاح! <a href='manage_projects.php'>العودة للمشاريع</a></div>";
+            $message = "<div class='flash-success'>تمت إضافة المشروع بنجاح! <a href='manage_projects.php'>العودة للمشاريع</a></div>";
         } else {
-            $message = "<div style='color:red; margin-bottom:15px; text-align:center;'>حدث خطأ أثناء الحفظ: " . $conn->error . "</div>";
+            $message = "<div class='auth-error'>حدث خطأ أثناء الحفظ: " . htmlspecialchars($conn->error) . "</div>";
         }
     }
 }
@@ -137,32 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>إضافة مشروع جديد | لوحة التحكم</title>
-        <link rel="stylesheet" href="style.css">
-        <style>
-            .form-container {
-                max-width: 800px;
-                margin: 40px auto;
-                background: var(--card-bg);
-                padding: 30px;
-                border-radius: var(--border-radius);
-                box-shadow: var(--shadow);
-            }
-            .form-container h2 { color: var(--primary-color); border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;}
-            .form-group { margin-bottom: 20px; }
-            .form-group label { display: block; font-weight: bold; margin-bottom: 8px; color: #374151;}
-            .form-group input, .form-group textarea, .form-group select {
-                width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 5px; font-family: inherit; font-size: 15px; box-sizing: border-box;
-            }
-            .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-                outline: none; border-color: var(--primary-color);
-                box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
-            }
-            .form-group textarea { height: 150px; resize: vertical; }
-            .row { display: flex; gap: 20px; }
-            .col { flex: 1; }
-            
-            @media(max-width: 768px) { .row { flex-direction: column; gap: 0; } }
-        </style>
+        <link rel="stylesheet" href="<?php echo htmlspecialchars(style_css_href(), ENT_QUOTES, 'UTF-8'); ?>">
     </head>
     <body class="admin-body">
 
@@ -212,37 +187,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     <div class="form-group">
                         <label>رابط LinkedIn لصاحب المشروع (اختياري)</label>
-                        <input type="url" name="owner_linkedin" dir="ltr" style="text-align:left;" placeholder="https://www.linkedin.com/in/username">
-                        <small style="display:block; color:#666; margin-top:6px;">يُعرض في صفحة تفاصيل المشروع للزوار.</small>
+                        <input type="url" name="owner_linkedin" class="input-ltr" placeholder="https://www.linkedin.com/in/username">
+                        <small class="form-hint">يُعرض في صفحة تفاصيل المشروع للزوار.</small>
                     </div>
 
-                    <div class="form-group" style="background: #f9fafb; padding: 20px; border-radius: 8px; border: 2px dashed #ccc; text-align: center;">
-                        <label style="margin-bottom: 10px; display: block;">صورة واجهة المشروع (اختياري ولكن مفضل)</label>
-                        <input type="file" name="project_image" accept="image/*" style="width: auto; margin: 0 auto;">
-                        <p style="color: #666; font-size: 13px; margin-top: 10px;">سيتم استخدام صورة افتراضية في حال لم تقم برفع صورة.</p>
+                    <div class="form-group upload-zone">
+                        <label>صورة واجهة المشروع (اختياري ولكن مفضل)</label>
+                        <input type="file" name="project_image" accept="image/*">
+                        <p class="form-hint">سيتم استخدام صورة افتراضية في حال لم تقم برفع صورة.</p>
                     </div>
 
-                    <div class="form-group" style="background: #f9fafb; padding: 20px; border-radius: 8px; border: 2px dashed #ccc; text-align: center; margin-top: 15px;">
-                        <label style="margin-bottom: 10px; display: block;">صورة بوستر المشروع (اختياري)</label>
-                        <input type="file" name="poster_image" accept="image/*" style="width: auto; margin: 0 auto;">
-                        <p style="color: #666; font-size: 13px; margin-top: 10px;">ارفع تصميم البوستر كصورة (JPG, PNG).</p>
+                    <div class="form-group upload-zone">
+                        <label>صورة بوستر المشروع (اختياري)</label>
+                        <input type="file" name="poster_image" accept="image/*">
+                        <p class="form-hint">ارفع تصميم البوستر كصورة (JPG, PNG).</p>
                     </div>
 
                     <div class="row">
-                        <div class="col form-group" style="background: #f9fafb; padding: 20px; border-radius: 8px; border: 2px dashed #ccc; text-align: center; margin-top: 15px;">
-                            <label style="margin-bottom: 10px; display: block;">ملف توثيق المشروع (PDF)</label>
-                            <input type="file" name="project_pdf" accept=".pdf" style="width: auto; margin: 0 auto;">
+                        <div class="col form-group upload-zone">
+                            <label>ملف توثيق المشروع (PDF)</label>
+                            <input type="file" name="project_pdf" accept=".pdf">
                         </div>
 
-                        <div class="col form-group" style="background: #f9fafb; padding: 20px; border-radius: 8px; border: 2px dashed #ccc; text-align: center; margin-top: 15px;">
-                            <label style="margin-bottom: 10px; display: block;">ملف بوستر المشروع (PDF)</label>
-                            <input type="file" name="poster_pdf" accept=".pdf" style="width: auto; margin: 0 auto;">
+                        <div class="col form-group upload-zone">
+                            <label>ملف بوستر المشروع (PDF)</label>
+                            <input type="file" name="poster_pdf" accept=".pdf">
                         </div>
                     </div>
 
-                    <div style="display: flex; gap: 15px; margin-top: 30px;">
-                        <button type="submit" class="btn btn-primary" style="flex: 2; padding: 12px; font-size: 16px;">رفع وإضافة المشروع</button>
-                        <a href="admin.php" class="btn btn-outline" style="flex: 1; text-align: center; padding: 12px; font-size: 16px;">إلغاء والعودة</a>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">رفع وإضافة المشروع</button>
+                        <a href="admin.php" class="btn btn-outline">إلغاء والعودة</a>
                     </div>
 
                 </form>

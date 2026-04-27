@@ -14,7 +14,7 @@ $result = $conn->query($sql);
 $project = $result->fetch_assoc();
 
 if (!$project) {
-    die("<h2 style='text-align:center; margin-top:50px;'>عذراً، المشروع غير موجود.</h2>");
+    die("<!DOCTYPE html><html lang='ar' dir='rtl'><head><meta charset='UTF-8'><link rel='stylesheet' href='" . htmlspecialchars(style_css_href(), ENT_QUOTES, 'UTF-8') . "'></head><body><h2 class='project-not-found-title'>عذراً، المشروع غير موجود.</h2></body></html>");
 }
 ?>
 <!DOCTYPE html>
@@ -22,7 +22,7 @@ if (!$project) {
 <head>
     <meta charset="UTF-8">
     <title>تفاصيل المشروع | <?php echo htmlspecialchars($project['title']); ?></title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="<?php echo htmlspecialchars(style_css_href(), ENT_QUOTES, 'UTF-8'); ?>">
 </head>
 <body>
     <header class="main-header">
@@ -42,7 +42,7 @@ if (!$project) {
                 <span>سنة التخرج: <?php echo htmlspecialchars($project['grad_year']); ?></span>
                 <?php if (!empty($project['owner_linkedin'])): ?>
                     <span>
-                        <a href="<?php echo htmlspecialchars($project['owner_linkedin'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="display:inline-block; padding:6px 14px; font-size:14px; text-decoration:none;">LinkedIn — صاحب المشروع</a>
+                        <a href="<?php echo htmlspecialchars($project['owner_linkedin'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-linkedin-inline">LinkedIn — صاحب المشروع</a>
                     </span>
                 <?php endif; ?>
             </div>
@@ -72,35 +72,35 @@ if (!$project) {
                 </section>
 
                 <?php if(!empty($project['project_poster'])): ?>
-                <section class="project-section" style="margin-top: 30px;">
+                <section class="project-section project-section-spaced">
                     <h2>بوستر المشروع</h2>
-                    <div style="text-align: center; background: #f9fafb; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
-                        <img src="uploads/<?php echo htmlspecialchars($project['project_poster']); ?>" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" alt="بوستر المشروع">
+                    <div class="poster-frame">
+                        <img src="uploads/<?php echo htmlspecialchars($project['project_poster']); ?>" alt="بوستر المشروع">
                     </div>
                 </section>
                 <?php endif; ?>
                 
-                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; text-align: center;">
+                <div class="project-files-block">
                     <h3>ملفات المشروع</h3>
                 
                     <?php if(!empty($project['pdf_file']) || !empty($project['project_poster_pdf'])): ?>
-                        <p style="color: #555; margin-bottom: 20px;">يمكنك تحميل ملفات المشروع المتوفرة للاستفادة من تفاصيل البحث والتصميم.</p>
+                        <p class="project-files-intro">يمكنك تحميل ملفات المشروع المتوفرة للاستفادة من تفاصيل البحث والتصميم.</p>
                         
-                        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                        <div class="project-files-actions">
                             <?php if(!empty($project['pdf_file'])): ?>
-                                <a href="uploads/documents/<?php echo htmlspecialchars($project['pdf_file']); ?>" download class="btn btn-primary" style="background-color: #10b981; padding: 12px 25px; font-size: 1.1rem; border: none; color: white; text-decoration: none; border-radius: 5px;">
+                                <a href="uploads/documents/<?php echo htmlspecialchars($project['pdf_file']); ?>" download class="btn btn-primary btn-download-doc">
                                     📥 تحميل وثيقة المشروع
                                 </a>
                             <?php endif; ?>
 
                             <?php if(!empty($project['project_poster_pdf'])): ?>
-                                <a href="uploads/documents/<?php echo htmlspecialchars($project['project_poster_pdf']); ?>" download class="btn btn-primary" style="background-color: #3b82f6; padding: 12px 25px; font-size: 1.1rem; border: none; color: white; text-decoration: none; border-radius: 5px;">
+                                <a href="uploads/documents/<?php echo htmlspecialchars($project['project_poster_pdf']); ?>" download class="btn btn-primary btn-download-poster">
                                     🖼️ تحميل بوستر المشروع (PDF)
                                 </a>
                             <?php endif; ?>
                         </div>
                     <?php else: ?>
-                        <p style="color: #9ca3af; font-style: italic; background: #f9fafb; padding: 15px; border-radius: 8px;">
+                        <p class="project-files-empty">
                             لا توجد ملفات توثيق أو بوسترات (PDF) مرفقة مع هذا المشروع حالياً.
                         </p>
                     <?php endif; ?>

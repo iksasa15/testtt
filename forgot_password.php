@@ -11,9 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($check->num_rows > 0) {
         $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
         $conn->query("UPDATE users SET password='$hashed_password' WHERE email='$email'");
-        $message = "<p style='color:green;'>تم إعادة ضبط كلمة المرور بنجاح! <a href='login_user.php'>سجل دخولك الآن</a></p>";
+        $message = "<div class='flash-success'>تم إعادة ضبط كلمة المرور بنجاح! <a href='login_user.php'>سجل دخولك الآن</a></div>";
     } else {
-        $message = "<p style='color:red;'>هذا البريد الإلكتروني غير مسجل لدينا.</p>";
+        $message = "<div class='auth-error'>هذا البريد الإلكتروني غير مسجل لدينا.</div>";
     }
 }
 ?>
@@ -22,12 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>استعادة كلمة المرور</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="<?php echo htmlspecialchars(style_css_href(), ENT_QUOTES, 'UTF-8'); ?>">
 </head>
 <body class="login-body">
     <div class="login-container">
         <h2>إعادة ضبط كلمة المرور</h2>
-        <p style="color:#666; font-size:14px; margin-bottom:20px;">أدخل بريدك الإلكتروني المسجل وكلمة المرور الجديدة.</p>
+        <p class="login-form-subtitle">أدخل بريدك الإلكتروني المسجل وكلمة المرور الجديدة.</p>
         <?php echo $message; ?>
         <form method="POST" action="">
             <div class="form-group">
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="password" name="new_password" required minlength="6">
             </div>
             <button type="submit" class="btn btn-primary submit-btn">حفظ كلمة المرور</button>
-            <a href="login_user.php" style="display:block; margin-top:15px; text-align:center;">العودة لتسجيل الدخول</a>
+            <a href="login_user.php" class="login-back-link">العودة لتسجيل الدخول</a>
         </form>
     </div>
 </body>

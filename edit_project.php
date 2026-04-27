@@ -3,14 +3,14 @@ session_start();
 include 'db_connect.php';
 
 if (!isset($_SESSION['admin_logged_in'])) {
-    header("Location: login.php");
+    header("Location: login_admin.php");
     exit();
 }
 
 $message = '';
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
-    die("<h2 style='text-align:center; margin-top:50px; color:red;'>عذراً، لم يتم تحديد المشروع المطلوب تعديله! <a href='manage_projects.php'>العودة للوحة التحكم</a></h2>");
+    die('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>خطأ</title><link rel="stylesheet" href="' . htmlspecialchars(style_css_href(), ENT_QUOTES, 'UTF-8') . '"></head><body class="login-body"><div class="simple-die-page is-error"><h2>عذراً، لم يتم تحديد المشروع المطلوب تعديله!</h2><p><a href="manage_projects.php">العودة للوحة التحكم</a></p></div></body></html>');
 }
 
 $project_id = intval($_GET['id']);
@@ -19,7 +19,7 @@ $sql = "SELECT * FROM projects WHERE id = $project_id";
 $result = $conn->query($sql);
 
 if ($result->num_rows == 0) {
-    die("<h2 style='text-align:center; margin-top:50px;'>المشروع غير موجود. <a href='manage_projects.php'>العودة للوحة التحكم</a></h2>");
+    die('<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>غير موجود</title><link rel="stylesheet" href="' . htmlspecialchars(style_css_href(), ENT_QUOTES, 'UTF-8') . '"></head><body class="login-body"><div class="simple-die-page"><h2>المشروع غير موجود.</h2><p><a href="manage_projects.php">العودة للوحة التحكم</a></p></div></body></html>');
 }
 
 $project = $result->fetch_assoc();
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         $linkedin_url = preg_match('#^https?://#i', $linkedin_raw) ? $linkedin_raw : 'https://' . ltrim($linkedin_raw, '/');
         if (stripos($linkedin_url, 'linkedin.com') === false) {
-            $message = "<div style='color:red; margin-bottom:15px;'>رابط LinkedIn غير صالح (يجب أن يحتوي على linkedin.com).</div>";
+            $message = "<div class='auth-error'>رابط LinkedIn غير صالح (يجب أن يحتوي على linkedin.com).</div>";
         } else {
             $update_sql .= ", owner_linkedin='" . $conn->real_escape_string($linkedin_url) . "'";
         }
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
         } else {
-            $message = "<div style='color:red; margin-bottom:15px;'>صيغة الصورة غير مدعومة. يرجى رفع ملف بصيغة JPG, PNG أو WEBP.</div>";
+            $message = "<div class='auth-error'>صيغة الصورة غير مدعومة. يرجى رفع ملف بصيغة JPG, PNG أو WEBP.</div>";
         }
     }
 
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
         } else {
-            $message = "<div style='color:red; margin-bottom:15px;'>صيغة صورة البوستر غير مدعومة. يرجى رفع ملف بصيغة JPG, PNG أو WEBP.</div>";
+            $message = "<div class='auth-error'>صيغة صورة البوستر غير مدعومة. يرجى رفع ملف بصيغة JPG, PNG أو WEBP.</div>";
         }
     }
 
@@ -113,10 +113,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if (file_exists($old_pdf_path)) unlink($old_pdf_path);
                 }
             } else {
-                $message = "<div style='color:red; margin-bottom:15px;'>حدث خطأ أثناء رفع ملف الـ PDF.</div>";
+                $message = "<div class='auth-error'>حدث خطأ أثناء رفع ملف الـ PDF.</div>";
             }
         } else {
-            $message = "<div style='color:red; margin-bottom:15px;'>صيغة الملف غير مدعومة. يرجى رفع ملف بصيغة PDF فقط.</div>";
+            $message = "<div class='auth-error'>صيغة الملف غير مدعومة. يرجى رفع ملف بصيغة PDF فقط.</div>";
         }
     }
 
@@ -137,10 +137,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if (file_exists($old_poster_pdf_path)) unlink($old_poster_pdf_path);
                 }
             } else {
-                $message = "<div style='color:red; margin-bottom:15px;'>حدث خطأ أثناء رفع ملف بوستر الـ PDF.</div>";
+                $message = "<div class='auth-error'>حدث خطأ أثناء رفع ملف بوستر الـ PDF.</div>";
             }
         } else {
-            $message = "<div style='color:red; margin-bottom:15px;'>صيغة ملف البوستر غير مدعومة. يرجى رفع ملف بصيغة PDF فقط.</div>";
+            $message = "<div class='auth-error'>صيغة ملف البوستر غير مدعومة. يرجى رفع ملف بصيغة PDF فقط.</div>";
         }
     }
 
@@ -148,10 +148,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (empty($message)) {
         if ($conn->query($update_sql)) {
-            $message = "<div style='color:green; margin-bottom:15px; text-align:center; font-weight:bold; background:#d4edda; padding:10px; border-radius:5px;'>تم تحديث بيانات المشروع بنجاح!</div>";
+            $message = "<div class='flash-success'>تم تحديث بيانات المشروع بنجاح!</div>";
             $project = $conn->query("SELECT * FROM projects WHERE id = $project_id")->fetch_assoc();
         } else {
-            $message = "<div style='color:red; margin-bottom:15px;'>حدث خطأ أثناء التحديث: " . $conn->error . "</div>";
+            $message = "<div class='auth-error'>حدث خطأ أثناء التحديث: " . htmlspecialchars($conn->error) . "</div>";
         }
     }
 }
@@ -163,33 +163,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تعديل المشروع | لوحة التحكم</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        .form-container {
-            max-width: 800px;
-            margin: 40px auto;
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-        }
-        .form-container h2 { color: var(--primary-color); border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;}
-        .form-group label { display: block; font-weight: bold; margin-bottom: 8px; color: #374151;}
-        .form-group input[type="text"], .form-group input[type="number"], .form-group textarea, .form-group select {
-            width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; font-family: inherit; font-size: 15px; margin-bottom: 15px; box-sizing: border-box;
-        }
-        .form-group textarea { height: 150px; resize: vertical; }
-        .current-image-preview { width: 100%; max-width: 250px; height: auto; border-radius: 8px; margin-bottom: 10px; border: 1px solid #ddd; }
-        .row { display: flex; gap: 20px; }
-        .col { flex: 1; }
-        @media(max-width: 768px) { .row { flex-direction: column; gap: 0; } }
-    </style>
+    <link rel="stylesheet" href="<?php echo htmlspecialchars(style_css_href(), ENT_QUOTES, 'UTF-8'); ?>">
 </head>
-<body style="background-color: #f8f9fa;">
+<body class="admin-body">
 
-    <div class="container">
+    <div class="admin-layout">
+
+        <?php include 'admin_side_bar.php'; ?>
+
+        <div class="admin-content">
+
+            <header class="admin-topbar">
+                <h3>تعديل مشروع</h3>
+            </header>
+
         <div class="form-container">
-            <h2>تعديل مشروع: <?php echo htmlspecialchars($project['title']); ?></h2>
+            <h2><?php echo htmlspecialchars($project['title']); ?></h2>
             
             <?php echo $message; ?>
 
@@ -226,78 +215,79 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 <div class="form-group">
                     <label>رابط LinkedIn لصاحب المشروع (اختياري)</label>
-                    <input type="url" name="owner_linkedin" dir="ltr" style="text-align:left;" value="<?php echo htmlspecialchars($project['owner_linkedin'] ?? ''); ?>" placeholder="https://www.linkedin.com/in/username">
-                    <small style="display:block; color:#666; margin-top:6px;">يُعرض في صفحة تفاصيل المشروع. اتركه فارغاً لإخفاء الرابط.</small>
+                    <input type="url" name="owner_linkedin" class="input-ltr" value="<?php echo htmlspecialchars($project['owner_linkedin'] ?? ''); ?>" placeholder="https://www.linkedin.com/in/username">
+                    <small class="form-hint">يُعرض في صفحة تفاصيل المشروع. اتركه فارغاً لإخفاء الرابط.</small>
                 </div>
 
-                <div class="form-group" style="background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px dashed #ccc; margin-bottom: 15px;">
+                <div class="form-group upload-zone">
                     <label>صورة واجهة المشروع الحالية</label>
                     <?php if(!empty($project['image_url']) && $project['image_url'] != 'default.jpg'): ?>
                         <img src="uploads/<?php echo $project['image_url']; ?>" alt="صورة المشروع" class="current-image-preview">
                     <?php else: ?>
-                        <p style="color: #666; font-size: 14px;">يستخدم هذا المشروع الصورة الافتراضية.</p>
+                        <p class="form-hint">يستخدم هذا المشروع الصورة الافتراضية.</p>
                     <?php endif; ?>
                     
-                    <label style="margin-top: 10px;">تغيير الصورة (اختياري)</label>
+                    <label class="upload-sub-label">تغيير الصورة (اختياري)</label>
                     <input type="file" name="project_image" accept="image/*">
-                    <small style="display:block; color: #666; margin-top:5px;">اترك هذا الحقل فارغاً إذا كنت لا ترغب بتغيير الصورة الحالية.</small>
+                    <small class="form-hint">اترك هذا الحقل فارغاً إذا كنت لا ترغب بتغيير الصورة الحالية.</small>
                 </div>
 
-                <div class="form-group" style="background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px dashed #ccc; margin-bottom: 15px;">
+                <div class="form-group upload-zone">
                     <label>صورة بوستر المشروع الحالية</label>
                     <?php if(!empty($project['project_poster'])): ?>
                         <img src="uploads/<?php echo $project['project_poster']; ?>" alt="بوستر المشروع" class="current-image-preview">
                     <?php else: ?>
-                        <p style="color: #666; font-size: 14px;">لا توجد صورة بوستر مرفوعة لهذا المشروع.</p>
+                        <p class="form-hint">لا توجد صورة بوستر مرفوعة لهذا المشروع.</p>
                     <?php endif; ?>
                     
-                    <label style="margin-top: 10px;">إضافة أو تغيير صورة البوستر (اختياري)</label>
+                    <label class="upload-sub-label">إضافة أو تغيير صورة البوستر (اختياري)</label>
                     <input type="file" name="poster_image" accept="image/*">
-                    <small style="display:block; color: #666; margin-top:5px;">اترك هذا الحقل فارغاً إذا كنت لا ترغب بتغيير الصورة.</small>
+                    <small class="form-hint">اترك هذا الحقل فارغاً إذا كنت لا ترغب بتغيير الصورة.</small>
                 </div>
 
                 <div class="row">
-                    <div class="col form-group" style="background: #eef2ff; padding: 15px; border-radius: 8px; border: 1px dashed #6366f1; margin-bottom: 15px;">
-                        <label style="color: #4f46e5;">ملف توثيق المشروع (PDF)</label>
+                    <div class="col form-group upload-zone upload-zone-accent">
+                        <label>ملف توثيق المشروع (PDF)</label>
                         
                         <?php if(!empty($project['pdf_file'])): ?>
-                            <div style="margin-bottom: 10px; padding: 10px; background: white; border-radius: 5px; border: 1px solid #c7d2fe;">
-                                <span style="color: #10b981; font-weight: bold;">✓ يوجد ملف مرفوع:</span> 
-                                <a href="uploads/documents/<?php echo $project['pdf_file']; ?>" target="_blank" style="color: #2563eb; text-decoration: underline;">معاينة التوثيق الحالي</a>
+                            <div class="pdf-preview-box">
+                                <span class="pdf-status-ok">✓ يوجد ملف مرفوع:</span> 
+                                <a href="uploads/documents/<?php echo $project['pdf_file']; ?>" target="_blank" rel="noopener noreferrer">معاينة التوثيق الحالي</a>
                             </div>
                         <?php else: ?>
-                            <p style="color: #666; font-size: 14px; margin-bottom: 10px;">لا يوجد ملف توثيق مرفق حالياً.</p>
+                            <p class="form-hint">لا يوجد ملف توثيق مرفق حالياً.</p>
                         <?php endif; ?>
 
-                        <label style="margin-top: 10px; color: #4f46e5;">تغيير أو إضافة ملف توثيق (اختياري)</label>
+                        <label>تغيير أو إضافة ملف توثيق (اختياري)</label>
                         <input type="file" name="project_pdf" accept=".pdf">
-                        <small style="display:block; color: #666; margin-top:5px;">اترك الحقل فارغاً للإبقاء على الملف الحالي.</small>
+                        <small class="form-hint">اترك الحقل فارغاً للإبقاء على الملف الحالي.</small>
                     </div>
 
-                    <div class="col form-group" style="background: #eef2ff; padding: 15px; border-radius: 8px; border: 1px dashed #6366f1; margin-bottom: 15px;">
-                        <label style="color: #4f46e5;">ملف بوستر المشروع (PDF)</label>
+                    <div class="col form-group upload-zone upload-zone-accent">
+                        <label>ملف بوستر المشروع (PDF)</label>
                         
                         <?php if(!empty($project['project_poster_pdf'])): ?>
-                            <div style="margin-bottom: 10px; padding: 10px; background: white; border-radius: 5px; border: 1px solid #c7d2fe;">
-                                <span style="color: #10b981; font-weight: bold;">✓ يوجد ملف مرفوع:</span> 
-                                <a href="uploads/documents/<?php echo $project['project_poster_pdf']; ?>" target="_blank" style="color: #2563eb; text-decoration: underline;">معاينة البوستر الحالي</a>
+                            <div class="pdf-preview-box">
+                                <span class="pdf-status-ok">✓ يوجد ملف مرفوع:</span> 
+                                <a href="uploads/documents/<?php echo $project['project_poster_pdf']; ?>" target="_blank" rel="noopener noreferrer">معاينة البوستر الحالي</a>
                             </div>
                         <?php else: ?>
-                            <p style="color: #666; font-size: 14px; margin-bottom: 10px;">لا يوجد ملف بوستر PDF مرفق حالياً.</p>
+                            <p class="form-hint">لا يوجد ملف بوستر PDF مرفق حالياً.</p>
                         <?php endif; ?>
 
-                        <label style="margin-top: 10px; color: #4f46e5;">تغيير أو إضافة بوستر PDF (اختياري)</label>
+                        <label>تغيير أو إضافة بوستر PDF (اختياري)</label>
                         <input type="file" name="poster_pdf" accept=".pdf">
-                        <small style="display:block; color: #666; margin-top:5px;">اترك الحقل فارغاً للإبقاء على الملف الحالي.</small>
+                        <small class="form-hint">اترك الحقل فارغاً للإبقاء على الملف الحالي.</small>
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 15px; margin-top: 25px;">
-                    <button type="submit" class="btn btn-primary" style="flex: 2;">حفظ التعديلات</button>
-                    <a href="manage_projects.php" class="btn btn-outline" style="flex: 1; text-align: center;">إلغاء والعودة</a>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">حفظ التعديلات</button>
+                    <a href="manage_projects.php" class="btn btn-outline">إلغاء والعودة</a>
                 </div>
 
             </form>
+        </div>
         </div>
     </div>
 

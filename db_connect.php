@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Cache-bust stylesheet so browsers pick up style.css changes after deploy/edit.
+ */
+function style_css_href(): string
+{
+    static $cache = null;
+    if ($cache !== null) {
+        return $cache;
+    }
+    $path = __DIR__ . '/style.css';
+    $v = is_readable($path) ? (string) filemtime($path) : '1';
+    $cache = 'style.css?v=' . rawurlencode($v);
+    return $cache;
+}
+
 $servername = getenv('DB_HOST') ?: 'localhost';
 $port = (int) (getenv('DB_PORT') ?: 3306);
 $username = getenv('DB_USER') ?: 'root';

@@ -38,29 +38,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>تسجيل دخول الإدارة</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="<?php echo htmlspecialchars(style_css_href(), ENT_QUOTES, 'UTF-8'); ?>">
 </head>
 <body class="login-body">
     <div class="login-container">
         <h2>تسجيل دخول الإدارة</h2>
         
-        <?php if($error): ?>
-            <div style="background-color: #fee2e2; color: #dc2626; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;">
-                <?php echo $error; ?>
-            </div>
-        <?php endif; ?>
+        <?php if ($error): ?><div class="auth-error"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
 
         <form method="POST" action="">
             <div class="form-group">
                 <label>اسم المستخدم</label>
-                <input type="text" name="username" required autocomplete="off">
+                <input type="text" name="username" required autocomplete="username">
             </div>
             <div class="form-group">
                 <label>كلمة المرور</label>
-                <input type="password" name="password" required>
+                <input type="password" name="password" required autocomplete="current-password">
             </div>
-            <button type="submit" class="btn btn-primary btn-block" style="padding: 12px; font-size: 16px;">تسجيل الدخول</button>
-            <a href="index.php" style="display:block; margin-top:15px; color:#6b7280; text-align:center;">العودة للرئيسية</a>
+            <button type="submit" class="btn btn-primary btn-block">تسجيل الدخول</button>
+            <a href="index.php" class="login-back-link">العودة للرئيسية</a>
         </form>
     </div>
 </body>

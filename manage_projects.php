@@ -15,16 +15,7 @@ $total_projects = $conn->query("SELECT COUNT(*) as count FROM projects")->fetch_
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إدارة المشاريع | لوحة التحكم</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        .project-thumb { width: 60px; height: 40px; border-radius: 4px; object-fit: cover; border: 1px solid #ddd; }
-        .tech-stack-small { font-size: 12px; color: #666; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px; }
-        .search-bar { width: 100%; max-width: 300px; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 5px; margin-bottom: 15px; }
-        .table-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .btn-sm { padding: 4px 8px; font-size: 12px; margin-right: 3px; }
-        .view-btn { background-color: #3498db; color: white; }
-        .view-btn:hover { background-color: #2980b9; }
-    </style>
+    <link rel="stylesheet" href="<?php echo htmlspecialchars(style_css_href(), ENT_QUOTES, 'UTF-8'); ?>">
 </head>
 <body class="admin-body">
 
@@ -36,14 +27,12 @@ $total_projects = $conn->query("SELECT COUNT(*) as count FROM projects")->fetch_
             
             <header class="admin-topbar">
                 <h3>إدارة المشاريع التفصيلية</h3>
-                <span style="background: var(--primary-color); color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold;">
-                    إجمالي المشاريع: <?php echo $total_projects; ?>
-                </span>
+                <span class="table-pill">إجمالي المشاريع: <?php echo $total_projects; ?></span>
             </header>
 
             <?php if(isset($_GET['msg'])): ?>
                 <?php if($_GET['msg'] == 'deleted'): ?>
-                    <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center;">تم حذف المشروع بنجاح!</div>
+                    <div class="flash-success">تم حذف المشروع بنجاح!</div>
                 <?php endif; ?>
             <?php endif; ?>
 
@@ -61,7 +50,7 @@ $total_projects = $conn->query("SELECT COUNT(*) as count FROM projects")->fetch_
                             <th>القسم والسنة</th>
                             <th>التقنيات المستخدمة</th>
                             <th>تاريخ الإضافة</th>
-                            <th style="min-width: 150px;">الإجراءات</th>
+                            <th class="admin-th-actions">الإجراءات</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -80,15 +69,15 @@ $total_projects = $conn->query("SELECT COUNT(*) as count FROM projects")->fetch_
                                 
                                 echo "<td>
                                         <strong>" . htmlspecialchars($row['title']) . "</strong><br>
-                                        <span style='font-size:12px; color:#888;'>رقم التسلسل: #" . $row['id'] . "</span>
+                                        <span class='table-meta'>رقم التسلسل: #" . $row['id'] . "</span>
                                       </td>";
                                       
                                 echo "<td>
                                         " . htmlspecialchars($row['department']) . "<br>
-                                        <span style='font-size:13px; font-weight:bold;'> دفعة " . $row['grad_year'] . "</span>
+                                        <span class='table-meta-strong'> دفعة " . $row['grad_year'] . "</span>
                                       </td>";
                                       
-                                echo "<td><div style='max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' title='" . htmlspecialchars($row['tech_stack']) . "'>
+                                echo "<td><div class='tech-ellipsis' title='" . htmlspecialchars($row['tech_stack']) . "'>
                                         <span class='tech-stack-small'>" . htmlspecialchars($row['tech_stack']) . "</span>
                                       </div></td>";
                                       
@@ -103,7 +92,7 @@ $total_projects = $conn->query("SELECT COUNT(*) as count FROM projects")->fetch_
                                 echo "</tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='6' style='text-align:center; padding: 20px;'>لا توجد مشاريع مضافة حتى الآن.</td></tr>";
+                            echo "<tr><td colspan='6' class='table-empty'>لا توجد مشاريع مضافة حتى الآن.</td></tr>";
                         }
                         ?>
                     </tbody>

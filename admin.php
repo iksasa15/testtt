@@ -34,11 +34,8 @@ while($row = $year_query->fetch_assoc()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة تحكم الإدارة | منصة المشاريع</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="<?php echo htmlspecialchars(style_css_href(), ENT_QUOTES, 'UTF-8'); ?>">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .action-btn { text-decoration: none; display: inline-block; }
-    </style>
 </head>
 <body class="admin-body">
 

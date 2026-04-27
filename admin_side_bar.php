@@ -7,6 +7,6 @@
             <li><a href="add_project.php">اضافه مشروع</a></li>
             <li><a href="manage_projects.php">إدارة المشاريع</a></li>
             <li><a href="manage_students.php">إدارة الطلاب</a></li>
-            <li><a href="logout_user.php" style="color: #e74c3c; margin-top: 20px;">تسجيل الخروج</a></li>
+            <li><a href="logout_user.php" class="nav-link-logout">تسجيل الخروج</a></li>
         </ul>
 </aside>

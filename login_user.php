@@ -32,24 +32,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>تسجيل دخول الطلاب</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="<?php echo htmlspecialchars(style_css_href(), ENT_QUOTES, 'UTF-8'); ?>">
 </head>
 <body class="login-body">
     <div class="login-container">
         <h2>تسجيل دخول الطلاب</h2>
-        <?php if($error) echo "<p style='color:red;'>$error</p>"; ?>
+        <?php if ($error): ?><div class="auth-error"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
         <form method="POST" action="">
             <div class="form-group">
                 <label>البريد الإلكتروني</label>
-                <input type="email" name="email" required>
+                <input type="email" name="email" required autocomplete="email">
             </div>
             <div class="form-group">
                 <label>كلمة المرور</label>
-                <input type="password" name="password" required>
+                <input type="password" name="password" required autocomplete="current-password">
             </div>
-            <button type="submit" class="btn btn-primary submit-btn">دخول</button>
-            <div style="margin-top: 15px; display:flex; justify-content:space-between;">
-                <a href="forgot_password.php" style="color:#e74c3c;">نسيت كلمة المرور؟</a>
+            <button type="submit" class="btn btn-primary btn-block">دخول</button>
+            <div class="login-form-footer">
+                <a href="forgot_password.php" class="link-danger">نسيت كلمة المرور؟</a>
                 <a href="register.php">إنشاء حساب</a>
             </div>
         </form>

@@ -40,9 +40,9 @@ CREATE TABLE `admins` (
 -- Dumping data for table `admins`
 --
 
--- تسجيل دخول الإدارة الافتراضي: اسم المستخدم admin — كلمة المرور Admin123! (يُنصح بتغييرها فوراً من لوحة الإدارة أو قاعدة البيانات)
+-- تسجيل دخول الإدارة الافتراضي: اسم المستخدم admin — كلمة المرور 1234 (يُنصح بتغييرها في الإنتاج)
 INSERT INTO `admins` (`id`, `username`, `password`) VALUES
-(1, 'admin', '$2y$12$SyTjOxDMW13xWT.S4.AqWuYRiqcMWup4TcQ3zNiI4/Vx0IxtGTnje');
+(1, 'admin', '$2y$12$50YkvymOJHDtbqSSwi950OnOB.gCwtA7TjjhPc0.duG7vQcSak5SS');
 
 -- --------------------------------------------------------
 

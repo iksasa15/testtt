@@ -1,8 +1,8 @@
-FROM php:8.2-apache
+# خادم PHP مدمج يقرأ $PORT (مطلوب على Railway ويعمل محلياً مع docker-compose).
+FROM php:8.2-cli
 
 RUN docker-php-ext-install mysqli \
-    && docker-php-ext-enable mysqli \
-    && a2enmod rewrite headers
+    && docker-php-ext-enable mysqli
 
 WORKDIR /var/www/html
 COPY . /var/www/html/
@@ -10,9 +10,8 @@ COPY . /var/www/html/
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R u+rwX /var/www/html/uploads 2>/dev/null || true
 
-COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+USER www-data
 
-EXPOSE 80
+EXPOSE 8080
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["sh", "-c", "exec php -S 0.0.0.0:${PORT:-8080} -t /var/www/html"]

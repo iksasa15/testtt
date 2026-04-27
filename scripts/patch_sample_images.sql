@@ -1,15 +1,15 @@
 -- بعد USE graduation_projects;
--- يحدّث صور المشاريع 1–12 إذا كانت ما زالت default.jpg أو فارغة.
+-- يحدّث صور المشاريع 1–12 إذا كانت افتراضية أو فارغة أو روابط picsum القديمة.
 
-UPDATE projects SET image_url = 'https://picsum.photos/seed/gradproj1/800/450'  WHERE id = 1  AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL);
-UPDATE projects SET image_url = 'https://picsum.photos/seed/gradproj2/800/450'  WHERE id = 2  AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL);
-UPDATE projects SET image_url = 'https://picsum.photos/seed/gradproj3/800/450'  WHERE id = 3  AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL);
-UPDATE projects SET image_url = 'https://picsum.photos/seed/gradproj4/800/450'  WHERE id = 4  AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL);
-UPDATE projects SET image_url = 'https://picsum.photos/seed/gradproj5/800/450'  WHERE id = 5  AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL);
-UPDATE projects SET image_url = 'https://picsum.photos/seed/gradproj6/800/450'  WHERE id = 6  AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL);
-UPDATE projects SET image_url = 'https://picsum.photos/seed/gradproj7/800/450'  WHERE id = 7  AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL);
-UPDATE projects SET image_url = 'https://picsum.photos/seed/gradproj8/800/450'  WHERE id = 8  AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL);
-UPDATE projects SET image_url = 'https://picsum.photos/seed/gradproj9/800/450'  WHERE id = 9  AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL);
-UPDATE projects SET image_url = 'https://picsum.photos/seed/gradproj10/800/450' WHERE id = 10 AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL);
-UPDATE projects SET image_url = 'https://picsum.photos/seed/gradproj11/800/450' WHERE id = 11 AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL);
-UPDATE projects SET image_url = 'https://picsum.photos/seed/gradproj12/800/450' WHERE id = 12 AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL);
+UPDATE projects SET image_url = 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&h=450&q=80' WHERE id = 1 AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL OR image_url LIKE 'https://picsum.photos%');
+UPDATE projects SET image_url = 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&h=450&q=80' WHERE id = 2 AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL OR image_url LIKE 'https://picsum.photos%');
+UPDATE projects SET image_url = 'https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=800&h=450&q=80' WHERE id = 3 AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL OR image_url LIKE 'https://picsum.photos%');
+UPDATE projects SET image_url = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&h=450&q=80' WHERE id = 4 AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL OR image_url LIKE 'https://picsum.photos%');
+UPDATE projects SET image_url = 'https://images.unsplash.com/photo-1516116216624-53e697fed753?auto=format&fit=crop&w=800&h=450&q=80' WHERE id = 5 AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL OR image_url LIKE 'https://picsum.photos%');
+UPDATE projects SET image_url = 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&h=450&q=80' WHERE id = 6 AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL OR image_url LIKE 'https://picsum.photos%');
+UPDATE projects SET image_url = 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&h=450&q=80' WHERE id = 7 AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL OR image_url LIKE 'https://picsum.photos%');
+UPDATE projects SET image_url = 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&h=450&q=80' WHERE id = 8 AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL OR image_url LIKE 'https://picsum.photos%');
+UPDATE projects SET image_url = 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&h=450&q=80' WHERE id = 9 AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL OR image_url LIKE 'https://picsum.photos%');
+UPDATE projects SET image_url = 'https://images.unsplash.com/photo-1496171367471-9adeddcf1bf4?auto=format&fit=crop&w=800&h=450&q=80' WHERE id = 10 AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL OR image_url LIKE 'https://picsum.photos%');
+UPDATE projects SET image_url = 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=800&h=450&q=80' WHERE id = 11 AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL OR image_url LIKE 'https://picsum.photos%');
+UPDATE projects SET image_url = 'https://images.unsplash.com/photo-1523240795612-9a054b055fdb?auto=format&fit=crop&w=800&h=450&q=80' WHERE id = 12 AND (image_url = 'default.jpg' OR image_url = '' OR image_url IS NULL OR image_url LIKE 'https://picsum.photos%');

@@ -2,10 +2,34 @@
 
 declare(strict_types=1);
 
-/** روابط صور ثابتة لكل مشروع تجريبي (picsum.photos — seed مختلف لكل id). */
+/**
+ * روابط صور ثابتة من Unsplash CDN (أكثر موثوقية من خدمات الصور العشوائية مثل picsum).
+ *
+ * @return array<int, string>
+ */
+function sample_project_image_urls(): array
+{
+    return [
+        1 => 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&h=450&q=80',
+        2 => 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&h=450&q=80',
+        3 => 'https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=800&h=450&q=80',
+        4 => 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&h=450&q=80',
+        5 => 'https://images.unsplash.com/photo-1516116216624-53e697fed753?auto=format&fit=crop&w=800&h=450&q=80',
+        6 => 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&h=450&q=80',
+        7 => 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&h=450&q=80',
+        8 => 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&h=450&q=80',
+        9 => 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&h=450&q=80',
+        10 => 'https://images.unsplash.com/photo-1496171367471-9adeddcf1bf4?auto=format&fit=crop&w=800&h=450&q=80',
+        11 => 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=800&h=450&q=80',
+        12 => 'https://images.unsplash.com/photo-1523240795612-9a054b055fdb?auto=format&fit=crop&w=800&h=450&q=80',
+    ];
+}
+
 function sample_project_image_url(int $id): string
 {
-    return 'https://picsum.photos/seed/gradproj' . $id . '/800/450';
+    $map = sample_project_image_urls();
+
+    return $map[$id] ?? $map[1];
 }
 
 /**
@@ -67,7 +91,7 @@ function ensure_sample_projects_if_empty(mysqli $conn): void
 }
 
 /**
- * يحدّث المشاريع التجريبية (id 1–12) التي ما زالت بدون صورة حقيقية إلى روابط picsum.
+ * يحدّث المشاريع التجريبية (id 1–12) بدون صورة أو بصورة افتراضية أو بروابط picsum القديمة.
  * آمن عندما تكون هذه الصفوف من العينة الافتراضية فقط.
  */
 function migrate_sample_project_remote_images(mysqli $conn): void
@@ -78,7 +102,7 @@ function migrate_sample_project_remote_images(mysqli $conn): void
     }
     $done = true;
 
-    $sql = 'UPDATE projects SET image_url = ? WHERE id = ? AND (image_url = \'default.jpg\' OR image_url = \'\' OR image_url IS NULL)';
+    $sql = 'UPDATE projects SET image_url = ? WHERE id = ? AND (image_url = \'default.jpg\' OR image_url = \'\' OR image_url IS NULL OR image_url LIKE \'https://picsum.photos%\')';
     $st = $conn->prepare($sql);
     if ($st === false) {
         return;
